@@ -1,17 +1,39 @@
-# workshop-springboot4-jpa
+# 🛠️ workshop-springboot4-jpa
 
 Workshop project on **Spring Boot 4** + **Spring Data JPA** — a REST e-commerce API covering
 `User`, `Product`, `Category`, `Order`, `OrderItem` and `Payment`, backed by **PostgreSQL** and
 deployed on **Railway**.
 
+_Projeto de workshop com **Spring Boot 4** + **Spring Data JPA** — uma API REST de e-commerce
+com `User`, `Product`, `Category`, `Order`, `OrderItem` e `Payment`, usando **PostgreSQL** e
+deploy no **Railway**._
+
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![JPA](https://img.shields.io/badge/JPA-Hibernate-59666C?style=for-the-badge&logo=hibernate&logoColor=white)](https://hibernate.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![Railway](https://img.shields.io/badge/deploy-Railway-111111?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/)
+![Status](https://img.shields.io/badge/status-educational-informational?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge)
+
+---
+
 The goal of the project is the JPA object-relational mapping layer: every entity mapping,
 association and persistence technique was written by hand. There is no security layer, no DTO
 layer and no frontend — the API returns entities directly as JSON.
 
-> **Status:** educational / workshop code. See [Known limitations](#known-limitations) before
-> exposing any deployment publicly.
+_O objetivo do projeto é a camada de mapeamento objeto-relacional do JPA: cada mapeamento de
+entidade, associação e técnica de persistência foi escrito à mão. Não há camada de segurança,
+nem camada de DTO, nem frontend — a API retorna as entidades diretamente como JSON._
 
-## Stack
+> **Status:** educational / workshop code. See [Known limitations](#known-limitations)
+> before exposing any deployment publicly.
+>
+> **Status:** código educacional / de workshop. Veja as
+> [limitações conhecidas](#known-limitations) antes de expor qualquer deploy publicamente.
+
+## 📦 Stack — _Tech Stack_
 
 | Component | Version |
 |---|---|
@@ -24,9 +46,11 @@ layer and no frontend — the API returns entities directly as JSON.
 | Build | Maven Wrapper 3.3.4 (Maven 3.9.16) |
 | Deploy | Railway |
 
-## Domain model
+## 🗺️ Domain Model — _Modelo de Domínio_
 
 The core of the workshop — the association strategies used and why:
+
+_O núcleo do workshop — as estratégias de associação usadas e por quê:_
 
 ```
 ┌───────────┴──────────┐   tb_user
@@ -81,14 +105,20 @@ The core of the workshop — the association strategies used and why:
 
 Computed values are derived, never persisted:
 
+_Valores computados são derivados, nunca persistidos:_
+
 - `OrderItem.getSubTotal()` = `price * quantity`
 - `Order.getTotal()` = sum of the order's item subtotals
 
 Entities implement `Serializable` and override `equals`/`hashCode` based on `id` only.
 
-## API endpoints
+_As entidades implementam `Serializable` e sobrescrevem `equals`/`hashCode` baseados apenas no `id`._
+
+## 🔌 API Endpoints — _Endpoints da API_
 
 Base path: none — the resources are mapped at the root.
+
+_Caminho base: nenhum — os resources são mapeados na raiz._
 
 ### Users (full CRUD)
 
@@ -112,6 +142,8 @@ Base path: none — the resources are mapped at the root.
 | `GET` | `/orders/{id}` | `200` — `Order` including `items` and computed `total` |
 
 Example — `GET /orders/1`:
+
+_Exemplo — `GET /orders/1`:_
 
 ```json
 {
@@ -141,9 +173,10 @@ Example — `GET /orders/1`:
 > `OrderItem` exposes no `id` in JSON: the entity has no `getId()`, so `product` (read from
 > `OrderItemPK`) is serialized at the top level and `order` is dropped by `@JsonIgnore`.
 >
-> `password` is serialized in plain text — this is one of the [known limitations](#known-limitations).
+> `password` is serialized in plain text — this is one of the
+> [known limitations](#known-limitations).
 
-## Error handling
+## ⚠️ Error Handling — _Tratamento de Erros_
 
 `ResourceExceptionHandler` (`@ControllerAdvice`) maps service exceptions to a `StandardError` body:
 
@@ -165,11 +198,13 @@ Example — `GET /orders/1`:
 > `StandardError.timestamp` is formatted with `@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")`, so it
 > has second precision and no milliseconds.
 
-## Running locally
+## 🚀 Running Locally — _Rodando Localmente_
 
 ### 1. Database (Docker)
 
 `docker-compose.yml` provides PostgreSQL 17 and pgAdmin:
+
+_O `docker-compose.yml` fornece PostgreSQL 17 e pgAdmin:_
 
 ```bash
 docker compose up -d
@@ -184,6 +219,9 @@ docker compose up -d
 
 `src/main/resources/application.properties` defaults to `spring.profiles.active=prod`, so pick a
 profile explicitly:
+
+_O `application.properties` usa `spring.profiles.active=prod` por padrão, então escolha um perfil
+explicitamente:_
 
 ```bash
 # dev → PostgreSQL, ddl-auto=update, SQL logging
@@ -206,9 +244,14 @@ export POSTGRES_USER=postgres POSTGRES_PASSWORD=1234567
 The `test` profile seeds 3 categories, 5 products, 2 users, 3 orders, 4 order items and 1
 payment on startup.
 
-### Environment variables
+_O perfil `test` popula 3 categorias, 5 produtos, 2 usuários, 3 pedidos, 4 itens de pedido e
+1 pagamento na inicialização._
+
+### Environment Variables
 
 Read by the `dev` and `prod` profiles — the app will not start without them:
+
+_Lidas pelos perfis `dev` e `prod` — a aplicação não sobe sem elas:_
 
 | Variable | Description |
 |---|---|
@@ -223,9 +266,14 @@ Read by the `dev` and `prod` profiles — the app will not start without them:
 No `.env` file is committed. Keep local credentials in an untracked `.env` (it is gitignored) or
 export the variables in your shell.
 
-## Deploying to Railway (PostgreSQL)
+_Nenhum arquivo `.env` é versionado. Mantenha as credenciais locais em um `.env` não rastreado
+(ele está no `.gitignore`) ou exporte as variáveis no seu shell._
+
+## ☁️ Deploying to Railway (PostgreSQL)
 
 This project is deployed on Railway. The steps used:
+
+_Este projeto está no Railway. Os passos usados foram:_
 
 1. Create a Railway project and add the **PostgreSQL** plugin.
 2. Add the **Java** (Maven) service — Railway auto-detects the root `pom.xml` and `mvnw`. No
@@ -242,10 +290,10 @@ This project is deployed on Railway. The steps used:
 > `script.sql` contains DDL only, no `INSERT` statements — a fresh production database starts
 > empty, so the read endpoints return empty lists until data is inserted.
 >
-> There is no migration tool (Flyway/Liquibase) in this project: schema changes are applied by
-> re-running `script.sql` manually.
+> Não existe ferramenta de migração (Flyway/Liquibase) neste projeto: mudanças de schema são
+> aplicadas reexecutando `script.sql` manualmente.
 
-## Tests
+## 🧪 Tests — _Testes_
 
 ```bash
 ./mvnw test -Dspring.profiles.active=test
@@ -254,7 +302,10 @@ This project is deployed on Railway. The steps used:
 The suite is intentionally minimal — `CourseApplicationTests` only asserts that the Spring context
 loads. There are no repository, service or endpoint tests yet.
 
-## Project structure
+_A suíte é intencionalmente mínima — `CourseApplicationTests` apenas verifica que o contexto do
+Spring carrega. Ainda não há testes de repository, service ou endpoint._
+
+## 📁 Project Structure — _Estrutura_
 
 ```
 src/main/java/com/educandoweb/course/
@@ -281,7 +332,9 @@ docker-compose.yml                  # PostgreSQL 17 + pgAdmin
 
 Layering: `resources` → `services` → `repositories` → `entities`.
 
-## Useful commands
+_Camadas: `resources` → `services` → `repositories` → `entities`._
+
+## 💻 Useful Commands — _Comandos Úteis_
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev   # run locally
@@ -291,32 +344,58 @@ docker compose up -d                                  # start PostgreSQL + pgAdm
 docker compose down -v                                 # stop and drop the volume
 ```
 
-## Known limitations
+<a id="known-limitations"></a>
+
+## 🚨 Known Limitations — _Limitações Conhecidas_
 
 This is workshop code, not production code. Deliberately out of scope, but worth knowing:
+
+_Este é código de workshop, não de produção. Fora de escopo de propósito, mas vale saber:_
 
 - **No authentication or authorization.** Every endpoint is public, including `POST /users`,
   `PUT /users/{id}` and `DELETE /users/{id}`. Do not publish the deployment URL — anyone who finds
   it can read and modify the database.
+  _**Sem autenticação nem autorização.** Todos os endpoints são públicos, incluindo `POST /users`,
+  `PUT /users/{id}` e `DELETE /users/{id}`. Não publique a URL do deploy — qualquer pessoa que a
+  encontrar consegue ler e modificar o banco._
 - **Passwords are stored and returned in plain text.** `User.password` has no encoder and is
   serialized in the JSON responses.
+  _**Senhas são armazenadas e retornadas em texto puro.** `User.password` não tem encoder e é
+  serializado nas respostas JSON._
 - **The `jwt.*` properties are dead configuration.** `jwt.secret` and `jwt.expiration` exist in the
   `dev` and `prod` property files, but no JWT implementation was ever added.
+  _**As propriedades `jwt.*` são configuração morta.** `jwt.secret` e `jwt.expiration` existem nos
+  arquivos de properties `dev` e `prod`, mas nenhuma implementação JWT foi adicionada._
 - **No migrations.** The schema lives in `script.sql` and is applied by hand.
+  _**Sem migrações.** O schema fica no `script.sql` e é aplicado manualmente._
 - **No DTO layer, no validation, no pagination, no OpenAPI/Swagger.** Entities are returned
   directly, and `spring.jpa.open-in-view` is enabled.
+  _**Sem camada de DTO, sem validação, sem paginação, sem OpenAPI/Swagger.** As entidades são
+  retornadas diretamente e `spring.jpa.open-in-view` está habilitado._
 - **Inconsistent 404 handling.** `UserService` throws `ResourceNotFoundException`, but
   `CategoryService`, `ProductService` and `OrderService` call `Optional.get()` directly, which
   results in a `500` instead of a `404` for a missing id.
+  _**Tratamento de 404 inconsistente.** `UserService` lança `ResourceNotFoundException`, mas
+  `CategoryService`, `ProductService` e `OrderService` chamam `Optional.get()` direto, o que
+  resulta em `500` em vez de `404` para um id inexistente._
 - **Seed data only exists in the `test` profile.** `dev` and `prod` start with an empty database.
+  _**Os dados de seed só existem no perfil `test`.** `dev` e `prod` sobem com o banco vazio._
 
 Known code issues left in place:
 
+_Problemas de código conhecidos mantidos no lugar:_
+
 - `OrderItemRepository extends JpaRepository<OrderItem, Long>`, but the entity's id is the
   `OrderItemPK` composite key, not a `Long`.
+  _O `OrderItemRepository` estende `JpaRepository<OrderItem, Long>`, mas o id da entidade é a
+  chave composta `OrderItemPK`, não um `Long`._
 - `org.postgresql:postgresql` is declared twice in `pom.xml` (once as `runtime`, once without a
   scope).
+  _`org.postgresql:postgresql` está declarado duas vezes no `pom.xml` (uma como `runtime`, outra
+  sem scope)._
 
-## License
+## 📄 License — _Licença_
 
-No license has been defined yet. All rights reserved until one is added.
+MIT — see [`LICENSE`](./LICENSE).
+
+_MIT — veja [`LICENSE`](./LICENSE)._
